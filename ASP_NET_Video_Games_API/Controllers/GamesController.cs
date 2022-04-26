@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ASP_NET_Video_Games_API.Data;
 using ASP_NET_Video_Games_API.Models;
+using System.Collections.Generic;
 
 namespace ASP_NET_Video_Games_API.Controllers
 {
@@ -71,7 +72,7 @@ namespace ASP_NET_Video_Games_API.Controllers
             foreach (int year in years.ToList())
             {
                 var highestSalesPerYr = _context.VideoGames.Where(i => i.Year == year).Max(vg => vg.GlobalSales);
-                var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr);
+                var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr && i.Year == year);
                 returnValue.Add(gameWthHighestSales);
             }
             return Ok(returnValue);
