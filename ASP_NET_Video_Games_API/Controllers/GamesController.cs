@@ -17,16 +17,25 @@ namespace ASP_NET_Video_Games_API.Controllers
             _context = context;
         }
 
-        //creating an endpoint starts with defining what type of endpoint it will be as seen below in the attribute '[HttpGet]'
         [HttpGet]
-        //For every endpoint IActionResult will be the return type of the function
-        public IActionResult GetPublishers()
+        public IActionResult GetGames()
         {
-            //We use var which is a runtime determined variable                     .Distinct() returns only a single publisher in the result
-            var videoGamePublishers = _context.VideoGames.Select(vg => vg.Publisher).Distinct();
+            var videoGames = _context.VideoGames;
+            return Ok(videoGames);
+        }
 
-            //The Ok method will send a 200 status code
-            return Ok(videoGamePublishers);
+        [HttpGet("{id}")]
+        public IActionResult GetGamesById(int id)
+        {
+            var videoGames = _context.VideoGames.Where(vg => vg.Id == id);
+            return Ok(videoGames);
+        }
+
+        [HttpGet("search/{searchTerm}")]
+        public IActionResult GetGames(string searchTerm)
+        {
+            var videoGames = _context.VideoGames.Where(vg => vg.Name.Contains(searchTerm));
+            return Ok(videoGames);
         }
     }
 }
