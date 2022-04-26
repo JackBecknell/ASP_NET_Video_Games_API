@@ -55,8 +55,8 @@ namespace ASP_NET_Video_Games_API.Controllers
             return Ok(returnValue);
         }
 
-        [HttpGet("{name}")]
-        public IActionResult GetGamesById(string name)
+        [HttpGet("gamebyname/{name}")]
+        public IActionResult GetGamesByName(string name)
         {
             var videoGame = _context.VideoGames.Where(vg => vg.Name == name);
             
@@ -66,19 +66,18 @@ namespace ASP_NET_Video_Games_API.Controllers
         [HttpGet("bestGamesYearly")]
         public IActionResult GetBestGames()
         {
-            var years = _context.VideoGames.Select(c => c.Year > 2013).Distinct();
-            List<VideoGame> returnValue = new List<VideoGame>();
-            foreach(int year in years.ToList())
+            var years = _context.VideoGames.Where(c => c.Year > 2013).Select(c => c.Year).Distinct();
+            List<IQueryable> returnValue = new List<IQueryable>();
+            foreach (int year in years.ToList())
             {
-
-                //unfinished
-
                 var highestSalesPerYr = _context.VideoGames.Where(i => i.Year == year).Max(vg => vg.GlobalSales);
-                var gameWthHighestSales = _context.VideoGames.Where(i => i.Year == highestSalesPerYr);
+                var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr);
                 returnValue.Add(gameWthHighestSales);
             }
-            return Ok(videoGame);
+            return Ok(returnValue);
         }
+
+
         //[HttpGet("salesByPublisher")]
         ////since 2013
         //public IActionResult GetSalesByConsole()
