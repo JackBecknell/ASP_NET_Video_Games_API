@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ASP_NET_Video_Games_API.Data;
+using ASP_NET_Video_Games_API.Models;
 
 namespace ASP_NET_Video_Games_API.Controllers
 {
@@ -43,16 +44,55 @@ namespace ASP_NET_Video_Games_API.Controllers
         public IActionResult GetSalesByConsole()
         {
             //global video games past 2013 by console.
-            var videoGames = _context.VideoGames.Where(vg => vg.Year > 2013);
             var consoles = _context.VideoGames.Select(c => c.Platform).Distinct();
             //int i = 0;
             Dictionary<string, double> returnValue = new Dictionary<string, double>();
-            foreach(string Platform in consoles)
+            foreach(string Platform in consoles.ToList())
             {
-                var salesPerConsole = videoGames.Where(i => i.Platform == Platform).Select(i => i.GlobalSales).Sum();
+                var salesPerConsole = _context.VideoGames.Where(i => i.Platform == Platform).Where(vg => vg.Year > 2013).Select(i => i.GlobalSales).Sum();
                 returnValue.Add(Platform, salesPerConsole);
             }
             return Ok(returnValue);
         }
+
+        [HttpGet("{name}")]
+        public IActionResult GetGamesById(string name)
+        {
+            var videoGame = _context.VideoGames.Where(vg => vg.Name == name);
+            
+            return Ok(videoGame);
+        }
+
+        [HttpGet("bestGamesYearly")]
+        public IActionResult GetBestGames()
+        {
+            var years = _context.VideoGames.Select(c => c.Year > 2013).Distinct();
+            List<VideoGame> returnValue = new List<VideoGame>();
+            foreach(int year in years.ToList())
+            {
+
+                //unfinished
+
+                var highestSalesPerYr = _context.VideoGames.Where(i => i.Year == year).Max(vg => vg.GlobalSales);
+                var gameWthHighestSales = _context.VideoGames.Where(i => i.Year == highestSalesPerYr);
+                returnValue.Add(gameWthHighestSales);
+            }
+            return Ok(videoGame);
+        }
+        //[HttpGet("salesByPublisher")]
+        ////since 2013
+        //public IActionResult GetSalesByConsole()
+        //{
+        //    //global video games past 2013 by console.
+        //    var publishers = _context.VideoGames.Select(c => c.Publisher).Distinct();
+        //    //int i = 0;
+        //    Dictionary<string, double> returnValue = new Dictionary<string, double>();
+        //    foreach (string Publisher in publishers.ToList())
+        //    {
+        //        var salesPerPublisher = _context.VideoGames.Where(i => i.Publisher == Publisher).Where(vg => vg.Year > 2013).Select(i => i.GlobalSales).Sum();
+        //        returnValue.Add(Platform, salesPerConsole);
+        //    }
+        //    return Ok(returnValue);
+        //}
     }
 }
