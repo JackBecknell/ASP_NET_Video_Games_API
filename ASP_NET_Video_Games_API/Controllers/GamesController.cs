@@ -50,8 +50,11 @@ namespace ASP_NET_Video_Games_API.Controllers
             Dictionary<string, double> returnValue = new Dictionary<string, double>();
             foreach(string Platform in consoles.ToList())
             {
-                var salesPerConsole = _context.VideoGames.Where(i => i.Platform == Platform).Where(vg => vg.Year > 2013).Select(i => i.GlobalSales).Sum();
-                returnValue.Add(Platform, salesPerConsole);
+                var salesPerConsole = _context.VideoGames.Where(i => i.Platform == Platform).Where(vg => vg.Year > 2013).Where(vg=>vg.GlobalSales > 0).Select(i => i.GlobalSales).Sum();
+                if (salesPerConsole > 0)
+                    {
+                        returnValue.Add(Platform, salesPerConsole);
+                    }
             }
             return Ok(returnValue);
         }
