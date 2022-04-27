@@ -68,13 +68,14 @@ namespace ASP_NET_Video_Games_API.Controllers
         public IActionResult GetBestGames()
         {
             var years = _context.VideoGames.Where(c => c.Year > 2013).Select(c => c.Year).Distinct();
-            List<IQueryable> returnValue = new List<IQueryable>();
+            List<IEnumerable<VideoGame>> returnValue = new List<IEnumerable<VideoGame>>();
             foreach (int year in years.ToList())
             {
                 var highestSalesPerYr = _context.VideoGames.Where(i => i.Year == year).Max(vg => vg.GlobalSales);
-                var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr && i.Year == year);
+                var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr && i.Year == year).AsEnumerable();
                 returnValue.Add(gameWthHighestSales);
             }
+
             return Ok(returnValue);
         }
 
