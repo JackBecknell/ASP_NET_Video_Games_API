@@ -67,51 +67,20 @@ namespace ASP_NET_Video_Games_API.Controllers
             return Ok(videoGame);
         }
 
-        //[HttpGet("bestGamesYearly")]
-        //public IActionResult GetBestGames()
-        //{
-        //    var years = _context.VideoGames.Where(c => c.Year > 2013).Select(c => c.Year).Distinct();
-        //    List<IEnumerable<VideoGame>> returnValue = new List<IEnumerable<VideoGame>>();
-        //    foreach (int year in years.ToList())
-        //    {
-        //        var highestSalesPerYr = _context.VideoGames.Where(i => i.Year == year).Max(vg => vg.GlobalSales);
-        //        var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr && i.Year == year).AsEnumerable();
-        //        returnValue.Add(gameWthHighestSales);
-        //    }
-
-        //    return Ok(returnValue);
-        //}
-
         [HttpGet("bestGamesYearly")]
         public IActionResult GetBestGames()
         {
             var years = _context.VideoGames.Where(c => c.Year > 2013).Select(c => c.Year).Distinct();
-            Dictionary<double, IEnumerable<string>> returnValue = new Dictionary<double, IEnumerable<string>>();
+            Dictionary<double, string> returnValue = new Dictionary<double, string>();
             foreach (int year in years.ToList())
             {
                 var highestSalesPerYr = _context.VideoGames.Where(i => i.Year == year).Max(vg => vg.GlobalSales);
-                var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr && i.Year == year).Select(i => i.Name).AsEnumerable();
+                var gameWthHighestSales = _context.VideoGames.Where(i => i.GlobalSales == highestSalesPerYr && i.Year == year).Select(i => i.Name).First().ToString();
                 returnValue.Add(year, gameWthHighestSales);
             }
 
             return Ok(returnValue);
         }
 
-
-        //[HttpGet("salesByPublisher")]
-        ////since 2013
-        //public IActionResult GetSalesByConsole()
-        //{
-        //    //global video games past 2013 by console.
-        //    var publishers = _context.VideoGames.Select(c => c.Publisher).Distinct();
-        //    //int i = 0;
-        //    Dictionary<string, double> returnValue = new Dictionary<string, double>();
-        //    foreach (string Publisher in publishers.ToList())
-        //    {
-        //        var salesPerPublisher = _context.VideoGames.Where(i => i.Publisher == Publisher).Where(vg => vg.Year > 2013).Select(i => i.GlobalSales).Sum();
-        //        returnValue.Add(Platform, salesPerConsole);
-        //    }
-        //    return Ok(returnValue);
-        //}
     }
 }
