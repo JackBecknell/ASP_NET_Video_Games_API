@@ -70,7 +70,7 @@ namespace ASP_NET_Video_Games_API.Controllers
         [HttpGet("bestGamesYearly")]
         public IActionResult GetBestGames()
         {
-            var years = _context.VideoGames.Where(c => c.Year > 2013).Select(c => c.Year).Distinct();
+            var years = _context.VideoGames.Where(c => c.Year != null).Select(c => c.Year).Distinct();
             Dictionary<double, string> returnValue = new Dictionary<double, string>();
             foreach (int year in years.ToList())
             {
@@ -81,6 +81,8 @@ namespace ASP_NET_Video_Games_API.Controllers
 
             return Ok(returnValue);
         }
+
+
 
     }
 }
