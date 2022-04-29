@@ -82,6 +82,25 @@ namespace ASP_NET_Video_Games_API.Controllers
             return Ok(returnValue);
         }
 
+        [HttpGet("publisherSalesByConsole")]
+        public IActionResult GetPublisherSalesByConsole()
+        {
+            var consoles = _context.VideoGames.Select(c => c.Platform).Distinct();
+            Dictionary<string, Dictionary<string, double>> returnValue = new Dictionary<string, Dictionary<string, double>>();  
+            foreach (string console in consoles.ToList())
+            {
+                Dictionary<string, double> sales = new Dictionary<string, double>();
+                var publishers = _context.VideoGames.Where(c => c.Platform == console).OrderByDescending(c => c.GlobalSales).Select(c => c.Publisher).Distinct().Take(3);
+                foreach (string publisher in publishers.ToList())
+                {
+                    var globalSales = _context.VideoGames.Where(vg => vg.Publisher == publisher).Select(i => i.GlobalSales).Sum();
+                    sales.Add(publisher, globalSales);
+                }
+                returnValue.Add(console, sales);
+            }
+            return Ok(returnValue);
+        }
+
 
 
     }
